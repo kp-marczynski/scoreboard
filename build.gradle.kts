@@ -12,6 +12,7 @@ repositories {
 dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
 tasks.test {

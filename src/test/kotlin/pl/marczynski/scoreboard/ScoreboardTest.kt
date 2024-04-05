@@ -48,13 +48,15 @@ class ScoreboardTest {
         // given
         val homeTeam = "a"
         val awayTeam = "b"
-        every { repository.removeByTeams(any(), any()) } returns Unit
+        val game = Game(homeTeam, awayTeam)
+        every { repository.findByTeams(homeTeam, awayTeam) } returns game
+        every { repository.remove(any()) } returns Unit
 
         // when
         scoreboard.finishGame(homeTeam, awayTeam)
 
         // then
-        verify { repository.removeByTeams(homeTeam, awayTeam) }
+        verify { repository.remove(game) }
     }
 
     @Test

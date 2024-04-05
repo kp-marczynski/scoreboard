@@ -1,6 +1,9 @@
 package pl.marczynski.scoreboard.model
 
-data class Game(val homeTeam: String, val awayTeam: String) {
+import java.time.Instant
+
+data class Game(val homeTeam: String, val awayTeam: String) : Comparable<Game> {
+    private val startTime: Instant = Instant.now()
     var homeScore: Int = 0
         private set
     var awayScore: Int = 0
@@ -11,5 +14,15 @@ data class Game(val homeTeam: String, val awayTeam: String) {
         this.awayScore = newAwayScore
         return this
     }
+
+    fun getTotalScore() = homeScore + awayScore
+    override fun compareTo(other: Game): Int {
+        return compareValuesBy(this, other,
+            { -it.getTotalScore() },  // Descending total score
+            { -it.startTime.nano } // Descending start time
+        )
+    }
+
+    override fun toString(): String = "$homeTeam $homeScore - $awayTeam $awayScore"
 }
 
