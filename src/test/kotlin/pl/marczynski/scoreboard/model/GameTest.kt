@@ -13,19 +13,19 @@ class GameTest {
         val newHomeScore = 1
         val newAwayScore = 2
         val game = Game("home", "away")
-        assertEquals(0, game.homeScore)
-        assertEquals(0, game.awayScore)
+        assertThat(game.homeScore).isEqualTo(0)
+        assertThat(game.awayScore).isEqualTo(0)
 
         // when
         val result = game.updateScores(newHomeScore, newAwayScore)
 
         // then
-        assertEquals(newHomeScore, result.homeScore)
-        assertEquals(newAwayScore, result.awayScore)
+        assertThat(result.homeScore).isEqualTo(newHomeScore)
+        assertThat(result.awayScore).isEqualTo(newAwayScore)
     }
 
     @Test
-    fun `total score should be calculated as sum of scores`(){
+    fun `total score should be calculated as sum of scores`() {
         // given
         val homeScore = 1
         val awayScore = 2

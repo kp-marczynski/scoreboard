@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import pl.marczynski.scoreboard.model.Game
 
 class InMemoryGameRepositoryTest {
-    private val games = mutableSetOf<Game>()
+    private val games = mutableListOf<Game>()
 
     private val repository = InMemoryGameRepository(games)
 

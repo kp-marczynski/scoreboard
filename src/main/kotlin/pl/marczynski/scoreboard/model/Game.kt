@@ -16,12 +16,12 @@ data class Game(val homeTeam: String, val awayTeam: String) : Comparable<Game> {
     }
 
     fun getTotalScore() = homeScore + awayScore
-    override fun compareTo(other: Game): Int {
-        return compareValuesBy(this, other,
-            { -it.getTotalScore() },  // Descending total score
+
+    override fun compareTo(other: Game): Int =
+        compareValuesBy(this, other,
+            { -it.getTotalScore() }, // Descending total score
             { -it.startTime.nano } // Descending start time
         )
-    }
 
     override fun toString(): String = "$homeTeam $homeScore - $awayTeam $awayScore"
 }

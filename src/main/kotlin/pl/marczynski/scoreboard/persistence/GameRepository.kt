@@ -8,5 +8,6 @@ interface GameRepository {
     fun remove(game: Game)
     fun removeAll()
     fun findByTeams(homeTeam: String, awayTeam: String): Game?
-    fun findAll(): List<Game>
+    fun existsByTeam(team: String): Boolean
+    fun findAll(): Collection<Game>
 }
