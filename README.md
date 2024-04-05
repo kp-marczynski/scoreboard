@@ -38,9 +38,10 @@ Then initiate Scoreboard with `ScoreboardFactory.createScoreboard()`
 * Instead of operating on arbitrary game id, homeTeam & awayTeam will be used for game identification.
 * To not allow of uncontrolled changes of game scores, defensive mechanism in game model will be used.
 * Game model toString() method will produce game summary that will be used in scoreboard.
-* Only ongoing games are stored. Finished games are removed from database.
+* As this repository is intended to use as a library, public api in Scoreboard class has javadoc documentation.
 * Functional assumptions:
   * score must be >= 0
   * team name cannot be blank
   * team can't play with itself
   * team can only have 1 active game
+  * Only ongoing games are stored. Finished games are removed from database.
