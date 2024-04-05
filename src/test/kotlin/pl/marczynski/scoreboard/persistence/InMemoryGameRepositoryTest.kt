@@ -33,6 +33,7 @@ class InMemoryGameRepositoryTest {
         // then
         assertThat(result).containsExactly(game4, game2, game1, game5, game3)
     }
+
     @Test
     fun `add should correctly add a game`() {
         // Given
@@ -58,7 +59,7 @@ class InMemoryGameRepositoryTest {
         games.add(game)
 
         // When
-        val updatedGame = game.updateScores( newHomeScore, newAwayScore)
+        val updatedGame = game.updateScores(newHomeScore, newAwayScore)
         repository.update(updatedGame)
 
         // Then

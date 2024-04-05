@@ -3,8 +3,6 @@ package pl.marczynski.scoreboard.model
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 class GameTest {
 
     @Test

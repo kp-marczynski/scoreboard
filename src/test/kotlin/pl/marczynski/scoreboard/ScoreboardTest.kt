@@ -1,12 +1,13 @@
 package pl.marczynski.scoreboard
 
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-
 import pl.marczynski.scoreboard.model.Game
 import pl.marczynski.scoreboard.persistence.GameRepository
 
@@ -16,6 +17,11 @@ class ScoreboardTest {
 
     private val homeTeam = "home team"
     private val awayTeam = "away team"
+
+    @AfterEach
+    fun cleanup() {
+        clearMocks(repository)
+    }
 
     @Test
     fun `starting a game adds it to the scoreboard`() {
@@ -56,6 +62,21 @@ class ScoreboardTest {
 
         // then
         verify { repository.remove(game) }
+    }
+
+    @Test
+    fun `finishGame throws NoSuchElementException when game not exists`() {
+        // given
+        every { repository.findByTeams(homeTeam, awayTeam) } returns null
+
+        // when
+        val exception = assertThrows<RuntimeException> {
+            scoreboard.finishGame(homeTeam, awayTeam)
+        }
+
+        // then
+        assertThat(exception).isInstanceOf(NoSuchElementException::class.java)
+        assertThat(exception.message).contains("Game not found.")
     }
 
     @Test
@@ -142,6 +163,21 @@ class ScoreboardTest {
         // then
         assertThat(exception).isInstanceOf(IllegalArgumentException::class.java)
         assertThat(exception.message).contains("Scores must be greater than or equal to 0.")
+    }
+
+    @Test
+    fun `updateScore throws NoSuchElementException when game not exists`() {
+        // given
+        every { repository.findByTeams(homeTeam, awayTeam) } returns null
+
+        // when
+        val exception = assertThrows<RuntimeException> {
+            scoreboard.updateScore(homeTeam, awayTeam, 0, 0)
+        }
+
+        // then
+        assertThat(exception).isInstanceOf(NoSuchElementException::class.java)
+        assertThat(exception.message).contains("Game not found.")
     }
 
     @Test

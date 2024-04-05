@@ -1,36 +1,46 @@
 package pl.marczynski.scoreboard
 
+import pl.marczynski.scoreboard.exceptions.GameNotFoundException
+import pl.marczynski.scoreboard.exceptions.InvalidScoreException
+import pl.marczynski.scoreboard.exceptions.InvalidTeamException
+import pl.marczynski.scoreboard.exceptions.TeamPlayException
 import pl.marczynski.scoreboard.model.Game
 import pl.marczynski.scoreboard.persistence.GameRepository
 
 class Scoreboard(private val gameRepository: GameRepository) {
-
     fun startGame(homeTeam: String, awayTeam: String) {
-        if (homeTeam == awayTeam) {
-            throw IllegalArgumentException("A team cannot play against itself.")
-        }
-        if (homeTeam.isBlank() || awayTeam.isBlank()) {
-            throw IllegalArgumentException("Team names must be non-empty and non-blank.")
-        }
-        if (listOf(homeTeam, awayTeam).any { gameRepository.existsByTeam(it) }) {
-            throw IllegalStateException("One or both teams are already involved in another game.")
-        }
+        validateGameStartRequest(homeTeam, awayTeam)
         gameRepository.add(Game(homeTeam, awayTeam))
     }
 
-    fun updateScore(homeTeam: String, awayTeam: String, homeScore: Int, awayScore: Int) {
-        if (homeScore < 0 || awayScore < 0) {
-            throw IllegalArgumentException("Scores must be greater than or equal to 0.")
+    private fun validateGameStartRequest(homeTeam: String, awayTeam: String) {
+        when {
+            homeTeam == awayTeam -> throw InvalidTeamException("A team cannot play against itself.")
+            homeTeam.isBlank() || awayTeam.isBlank() -> throw InvalidTeamException("Team names must be non-empty and non-blank.")
+            gameRepository.existsByTeam(homeTeam) -> throw TeamPlayException(homeTeam)
+            gameRepository.existsByTeam(awayTeam) -> throw TeamPlayException(awayTeam)
         }
-        val game = gameRepository.findByTeams(homeTeam, awayTeam) ?: throw NoSuchElementException("Game not found.")
+    }
+
+    fun updateScore(homeTeam: String, awayTeam: String, homeScore: Int, awayScore: Int) {
+        validateUpdateScoreRequest(homeScore, awayScore)
+        val game = fetchGameOrThrow(homeTeam, awayTeam)
 
         gameRepository.update(
             game.updateScores(homeScore, awayScore)
         )
     }
 
+    private fun validateUpdateScoreRequest(homeScore: Int, awayScore: Int) {
+        if (homeScore < 0 || awayScore < 0) throw InvalidScoreException()
+    }
+
+    private fun fetchGameOrThrow(homeTeam: String, awayTeam: String): Game {
+        return gameRepository.findByTeams(homeTeam, awayTeam) ?: throw GameNotFoundException()
+    }
+
     fun finishGame(homeTeam: String, awayTeam: String) {
-        val game = gameRepository.findByTeams(homeTeam, awayTeam) ?: throw NoSuchElementException("Game not found.")
+        val game = fetchGameOrThrow(homeTeam, awayTeam)
         gameRepository.remove(game)
     }
 
